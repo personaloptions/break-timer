@@ -324,6 +324,7 @@ let S = load();
 let params; try{ params = new URLSearchParams(location.search); }catch(e){ params = new URLSearchParams(); }
 const urlMin = parseFloat(params.get("min"));
 if(params.get("mode")==="corner"||params.get("mode")==="full") S.mode = params.get("mode");
+else if(params.has("min")) S.mode = "full"; // scene links: full screen unless the link asks for the corner
 if(params.get("title")) S.title = params.get("title");
 if(params.has("workshop")) S.workshop = params.get("workshop");
 if(params.get("font") && FONTS[params.get("font")]) S.headFont = params.get("font");
