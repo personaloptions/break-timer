@@ -113,6 +113,11 @@
   .btn.on{border-color:var(--accent)}
   .sep{width:1px;height:22px;background:var(--line);margin:0 2px}
 
+  #toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:#141c26;border:1px solid var(--line);padding:10px 16px;border-radius:10px;
+    font-size:14px;opacity:0;transition:opacity .3s;z-index:40;pointer-events:none}
+  #toast.show{opacity:1}
+  #linkBox{position:fixed;inset:0;z-index:35;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.45)}
+  #linkBox.open{display:flex}
   /* ---------- SETTINGS ---------- */
   #settings{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.45)}
   #settings.open{display:flex}
@@ -170,6 +175,18 @@
   <button class="btn" id="layout" title="Switch layout (L)">Corner</button>
   <button class="btn" id="fs" title="Full screen (F)">⤢</button>
   <button class="btn" id="gear" title="Settings (S)">Settings</button>
+  <span class="sep"></span>
+  <button class="btn primary" id="camoLink" title="Copy a link with these settings for a Camo Studio Web Layer">Copy Camo link</button>
+</div>
+<div id="toast"></div>
+<div id="linkBox" role="dialog" aria-label="Camo link">
+  <div class="panel" style="width:min(720px,94vw)">
+    <h2>Link for Camo Studio</h2>
+    <div class="sub" id="linkMsg">Copied. Paste it into a Web Layer in Camo Studio.</div>
+    <input type="text" id="linkText" readonly style="width:100%;background:#0d141c;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:14px">
+    <div class="hint" style="margin-top:8px">Includes the break length, layout, sayings on/off, workshop name, heading and fonts. The timer starts by itself when the scene opens, with no buttons showing.</div>
+    <div class="actions"><button class="btn" id="linkCopy">Copy again</button><button class="btn primary" id="linkClose">Done</button></div>
+  </div>
 </div>
 
 <div id="settings" role="dialog" aria-modal="true" aria-labelledby="setTitle">
@@ -506,6 +523,33 @@ $("sPw").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault()
 $("sDefaults").onclick=()=>{ const keep={minutes:S.minutes,mode:S.mode,workshop:S.workshop, ...(unlocked?{}:{brand:S.brand,site:S.site})}; S={...DEFAULTS,...keep}; save(); openSettings(); applyText(); parseQuotes(); render(); };
 $("settings").addEventListener("click",e=>{ if(e.target.id==="settings") closeSettings(); });
 
+/* ---------- Camo link ---------- */
+function camoLink(){
+  const u=new URL(location.href.split("#")[0]); u.search="";
+  const q=new URLSearchParams();
+  q.set("min", String(+(total/60).toFixed(2)).replace(/\.0+$/,""));
+  q.set("clean","1");
+  q.set("mode", S.mode==="corner"?"corner":"full");
+  if(!S.quotes) q.set("quotes","0");
+  if(S.workshop) q.set("workshop", S.workshop);
+  if(S.title && S.title!==DEFAULTS.title) q.set("title", S.title);
+  if(S.headFont && S.headFont!==DEFAULTS.headFont) q.set("font", S.headFont);
+  if(S.timeFont && S.timeFont!==DEFAULTS.timeFont) q.set("timerfont", S.timeFont);
+  return u.origin+u.pathname+"?"+q.toString().replace(/\+/g,"%20");
+}
+function toast(t){ const el=$("toast"); el.textContent=t; el.classList.add("show"); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove("show"),2200); }
+async function copyText(t){ try{ await navigator.clipboard.writeText(t); return true; }catch(e){ return false; } }
+async function showCamoLink(){
+  const link=camoLink(); $("linkText").value=link;
+  const ok=await copyText(link);
+  $("linkMsg").textContent = ok ? "Copied. Paste it into a Web Layer in Camo Studio." : "Select the link below and copy it, then paste it into a Web Layer in Camo Studio.";
+  $("linkBox").classList.add("open"); $("linkText").focus(); $("linkText").select();
+}
+$("camoLink").onclick=showCamoLink;
+$("linkCopy").onclick=async()=>{ $("linkText").select(); toast((await copyText($("linkText").value))?"Link copied":"Select the link and copy it"); };
+$("linkClose").onclick=()=>$("linkBox").classList.remove("open");
+$("linkBox").addEventListener("click",e=>{ if(e.target.id==="linkBox") $("linkBox").classList.remove("open"); });
+
 /* ---------- wiring ---------- */
 document.querySelectorAll("[data-preset]").forEach(b=>b.onclick=()=>resetTo(+b.dataset.preset));
 playBtn.onclick=toggle; $("reset").onclick=()=>resetTo(S.minutes);
@@ -514,6 +558,7 @@ $("layout").onclick=toggleLayout; $("qbtn").onclick=toggleQuotes; $("fs").onclic
 
 document.addEventListener("keydown",e=>{
   if($("settings").classList.contains("open")){ if(e.key==="Escape") closeSettings(); return; }
+  if($("linkBox").classList.contains("open")){ if(e.key==="Escape") $("linkBox").classList.remove("open"); return; }
   if(e.target.matches("input,textarea,select")) return;
   const k=e.key.toLowerCase();
   if(k===" "){e.preventDefault();toggle();}

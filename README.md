@@ -6,6 +6,10 @@ A break-timer overlay for virtual workshops, made for Camo Studio Web Layers.
 
 ## Links for Camo Studio scenes
 
+Easiest way: open the timer in Chrome, set it up how you want (length, layout, sayings, workshop name, fonts), then press **Copy Camo link** and paste that into a Camo Studio Web Layer.
+
+Or build a link by hand:
+
 | What you want | Add to the end of the address |
 |---|---|
 | 10-minute break, starts as soon as the scene opens, no buttons | `?min=10&clean=1` |
