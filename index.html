@@ -14,6 +14,8 @@
     --accent:#f0693a;
     --glass:rgba(12,18,28,.38);
     --line:rgba(255,255,255,.22);
+    --headFont:Fraunces,Georgia,serif;
+    --timeFont:Inter,system-ui,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{background:transparent}
@@ -44,15 +46,15 @@
   .eyebrow{display:inline-flex;align-items:center;gap:.6em;font-weight:600;letter-spacing:.28em;text-transform:uppercase;
     font-size:clamp(11px,1.15vw,17px);color:var(--muted);margin-bottom:1.6vh}
   .eyebrow::before,.eyebrow::after{content:"";width:2.2em;height:1px;background:var(--line)}
-  #workshop{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(45px,5.1vw,78px);line-height:1.08;letter-spacing:0;color:var(--ink);opacity:1;
+  #workshop{font-family:var(--headFont);font-weight:600;font-size:clamp(45px,5.1vw,78px);line-height:1.08;letter-spacing:0;color:var(--ink);opacity:1;
     margin-bottom:1.6vh;text-wrap:balance;text-shadow:0 2px 14px rgba(0,0,0,.45);max-width:80vw}
   #workshop:empty{display:none}
-  #title{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(26px,4.2vw,64px);line-height:1.1;
+  #title{font-family:var(--headFont);font-weight:600;font-size:clamp(26px,4.2vw,64px);line-height:1.1;
     text-shadow:0 2px 24px rgba(0,0,0,.35)}
-  #time{font-weight:300;font-size:clamp(84px,17vw,260px);line-height:1;letter-spacing:-.02em;
+  #time{font-family:var(--timeFont);font-weight:300;font-size:clamp(84px,17vw,260px);line-height:1;letter-spacing:-.02em;
     font-variant-numeric:tabular-nums;margin:1.2vh 0 .4vh;text-shadow:0 4px 40px rgba(0,0,0,.35);transition:color .6s}
   #time.ending{animation:pulse 1.6s ease-in-out infinite}
-  #time.done{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(54px,9vw,140px);letter-spacing:0}
+  #time.done{font-family:var(--headFont);font-weight:600;font-size:clamp(54px,9vw,140px);letter-spacing:0}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.62}}
   #backat{font-size:clamp(14px,1.6vw,24px);color:var(--muted);min-height:1.4em}
   #backat b{color:var(--ink);font-weight:500}
@@ -60,7 +62,7 @@
   .quote{position:absolute;left:50%;bottom:8.5vh;transform:translateX(-50%);width:min(1200px,88vw);text-align:center;
     transition:opacity 1.1s ease, transform 1.1s ease}
   .quote.hide{opacity:0;transform:translateX(-50%) translateY(10px)}
-  .quote p{font-family:Fraunces,Georgia,serif;font-style:italic;font-size:clamp(24px,3.2vw,52px);line-height:1.28;text-wrap:balance;
+  .quote p{font-family:var(--headFont);font-style:italic;font-size:clamp(24px,3.2vw,52px);line-height:1.28;text-wrap:balance;
     text-shadow:0 2px 18px rgba(0,0,0,.5)}
   .quote span{display:block;margin-top:.6em;font-size:clamp(13px,1.35vw,20px);letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
 
@@ -175,6 +177,8 @@
     <h2 id="setTitle">Break timer settings</h2>
     <div class="sub">Changes save in this browser.</div>
     <div class="row"><label for="sWorkshop">Workshop name</label><input type="text" id="sWorkshop" placeholder="e.g. Leading Through Change"></div>
+    <div class="row"><label for="sHeadFont">Heading &amp; sayings font</label><select id="sHeadFont"></select></div>
+    <div class="row"><label for="sTimeFont">Timer font</label><select id="sTimeFont"></select></div>
     <div class="row"><label for="sTitle">Heading</label><input type="text" id="sTitle"></div>
     <div class="row"><label for="sEyebrow">Label</label><input type="text" id="sEyebrow"></div>
     <div class="row"><label for="sDone">When time's up</label><input type="text" id="sDone"></div>
@@ -210,7 +214,7 @@
     </div>
     <div class="help">
       <b>Shortcuts:</b> Space start/pause · R reset · + / − change by a minute · 1–9 set minutes ×5 · L layout · F full screen · S settings · Q sayings on/off · H hide controls.<br>
-      <b>Links for Camo Web Layers</b> (when the page is hosted at its own address): add <code>?min=10</code> to start a 10-minute break as soon as the scene opens, <code>&amp;mode=corner</code> for the small overlay, <code>&amp;clean=1</code> to hide the buttons, <code>&amp;quotes=0</code> for the timer only, <code>&amp;workshop=Leading%20Through%20Change</code> to show the workshop name.
+      <b>Links for Camo Web Layers</b> (when the page is hosted at its own address): add <code>?min=10</code> to start a 10-minute break as soon as the scene opens, <code>&amp;mode=corner</code> for the small overlay, <code>&amp;clean=1</code> to hide the buttons, <code>&amp;quotes=0</code> for the timer only, <code>&amp;workshop=Leading%20Through%20Change</code> to show the workshop name, <code>&amp;font=Lora</code> and <code>&amp;timerfont=Oswald</code> to change fonts (use <code>+</code> for spaces, e.g. <code>Playfair+Display</code>).
     </div>
   </div>
 </div>
@@ -272,12 +276,44 @@ Listen to understand, not just to reply.
 Breathe. Stretch. Come back with one new question.`;
 
 const DEFAULTS = {
+  headFont:"Fraunces", timeFont:"Inter",
   workshop:"", title:"Time to recharge", eyebrow:"Break", done:"Welcome back",
   brand:"<b>Tom Smyth</b> &nbsp;·&nbsp; Transformational Change",
   site:"www.tom-smyth.com",
   zones:"Dublin = Europe/Dublin\nNew York = America/New_York\nSingapore = Asia/Singapore",
   slide:20, backAt:false, chime:true, quotes:true, list:DEFAULT_QUOTES, minutes:10, mode:"full"
 };
+
+/* ---------- fonts (Google Fonts, loaded only when chosen) ---------- */
+const FONTS = {
+  "Fraunces":["serif",""],
+  "Playfair Display":["serif","ital,wght@0,400;0,700;1,400"],
+  "Lora":["serif","ital,wght@0,400;0,600;1,400"],
+  "Merriweather":["serif","ital,wght@0,300;0,700;1,300"],
+  "DM Serif Display":["serif","ital@0;1"],
+  "Inter":["sans-serif",""],
+  "Montserrat":["sans-serif","ital,wght@0,300;0,600;1,400"],
+  "Poppins":["sans-serif","ital,wght@0,300;0,600;1,400"],
+  "Raleway":["sans-serif","ital,wght@0,300;0,600;1,400"],
+  "Lato":["sans-serif","ital,wght@0,300;0,700;1,400"],
+  "Open Sans":["sans-serif","ital,wght@0,300;0,600;1,400"],
+  "Oswald":["sans-serif","wght@300;600"],
+  "Bebas Neue":["sans-serif",""+"wght@400"],
+  "Caveat":["cursive","wght@400;700"]
+};
+function loadFont(name){
+  const f=FONTS[name]; if(!f||!f[1]) return;
+  const id="gf-"+name.replace(/\s+/g,"-"); if(document.getElementById(id)) return;
+  const l=document.createElement("link"); l.id=id; l.rel="stylesheet";
+  l.href=`https://fonts.googleapis.com/css2?family=${encodeURIComponent(name).replace(/%20/g,"+")}:${f[1]}&display=swap`;
+  document.head.appendChild(l);
+}
+function applyFonts(){
+  const hf=FONTS[S.headFont]?S.headFont:"Fraunces", tf=FONTS[S.timeFont]?S.timeFont:"Inter";
+  loadFont(hf); loadFont(tf);
+  document.documentElement.style.setProperty("--headFont", `"${hf}", ${FONTS[hf][0]==="serif"?"Georgia, serif":FONTS[hf][0]}`);
+  document.documentElement.style.setProperty("--timeFont", `"${tf}", ${FONTS[tf][0]==="serif"?"Georgia, serif":"system-ui, sans-serif"}`);
+}
 
 /* ---------- storage (optional) ---------- */
 function load(){ try{ return Object.assign({},DEFAULTS,JSON.parse(localStorage.getItem("tsBreakTimer2")||"{}")); }catch(e){ return {...DEFAULTS}; } }
@@ -290,6 +326,8 @@ const urlMin = parseFloat(params.get("min"));
 if(params.get("mode")==="corner"||params.get("mode")==="full") S.mode = params.get("mode");
 if(params.get("title")) S.title = params.get("title");
 if(params.has("workshop")) S.workshop = params.get("workshop");
+if(params.get("font") && FONTS[params.get("font")]) S.headFont = params.get("font");
+if(params.get("timerfont") && FONTS[params.get("timerfont")]) S.timeFont = params.get("timerfont");
 if(params.get("quotes")==="0") S.quotes=false;
 if(params.get("quotes")==="1") S.quotes=true;
 if(params.get("clean")==="1") document.body.classList.add("clean");
@@ -423,6 +461,7 @@ function chime(){
 
 /* ---------- layout & text ---------- */
 function applyText(){
+  applyFonts();
   $("workshop").textContent=S.workshop||""; $("title").textContent=S.title; $("eyebrow").textContent=S.eyebrow; $("brand").innerHTML=S.brand;
   $("site").textContent=S.site||""; $("csite").textContent=S.site||"";
   document.querySelectorAll(".logoImg").forEach(i=>i.src=LOGO);
@@ -438,6 +477,8 @@ function fullscreen(){ try{ document.fullscreenElement? document.exitFullscreen(
 
 /* ---------- settings panel ---------- */
 function openSettings(){
+  ["sHeadFont","sTimeFont"].forEach(id=>{ const sel=$(id); if(!sel.options.length) Object.keys(FONTS).forEach(n=>{ const o=document.createElement("option"); o.value=o.textContent=n; sel.appendChild(o); }); });
+  $("sHeadFont").value=S.headFont; $("sTimeFont").value=S.timeFont; prevFonts=[S.headFont,S.timeFont];
   $("sWorkshop").value=S.workshop||""; $("sTitle").value=S.title; $("sEyebrow").value=S.eyebrow; $("sDone").value=S.done;
   $("sSite").value=S.site||"";
   $("sBrand").value=S.brand.replace(/<[^>]+>/g,"").replace(/&nbsp;/g," ");
@@ -445,17 +486,20 @@ function openSettings(){
   setLock(true);
   $("settings").classList.add("open");
 }
-function closeSettings(){ $("settings").classList.remove("open"); setLock(true); }
+let prevFonts=null;
+function closeSettings(saved){ if(saved!==true && prevFonts){ [S.headFont,S.timeFont]=prevFonts; applyFonts(); } prevFonts=null; $("settings").classList.remove("open"); setLock(true); }
 function escapeHtml(s){ return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 $("sSave").onclick=()=>{
+  S.headFont=$("sHeadFont").value; S.timeFont=$("sTimeFont").value;
   S.workshop=$("sWorkshop").value.trim(); S.title=$("sTitle").value||DEFAULTS.title; S.eyebrow=$("sEyebrow").value; S.done=$("sDone").value||DEFAULTS.done;
   if(unlocked){
     const b=$("sBrand").value.trim(); S.brand = b? escapeHtml(b).replace(/^([^·|]+)/,"<b>$1</b>") : "";
     S.site=$("sSite").value.trim();
   }
   S.slide=+$("sSlide").value; S.backAt=$("sBackAt").checked; S.zones=$("sZones").value; S.chime=$("sChime").checked; S.quotes=$("sQuotes").checked; S.list=$("sList").value;
-  save(); applyText(); parseQuotes(); showQuote(); startSlides(); render(); closeSettings();
+  save(); applyText(); parseQuotes(); showQuote(); startSlides(); render(); closeSettings(true);
 };
+$("sHeadFont").onchange=$("sTimeFont").onchange=()=>{ S.headFont=$("sHeadFont").value; S.timeFont=$("sTimeFont").value; applyFonts(); };
 $("sUnlock").onclick=tryUnlock;
 $("sPw").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); tryUnlock(); } });
 $("sDefaults").onclick=()=>{ const keep={minutes:S.minutes,mode:S.mode,workshop:S.workshop, ...(unlocked?{}:{brand:S.brand,site:S.site})}; S={...DEFAULTS,...keep}; save(); openSettings(); applyText(); parseQuotes(); render(); };
