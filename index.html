@@ -44,6 +44,9 @@
   .eyebrow{display:inline-flex;align-items:center;gap:.6em;font-weight:600;letter-spacing:.28em;text-transform:uppercase;
     font-size:clamp(11px,1.15vw,17px);color:var(--muted);margin-bottom:1.6vh}
   .eyebrow::before,.eyebrow::after{content:"";width:2.2em;height:1px;background:var(--line)}
+  #workshop{font-weight:500;font-size:clamp(15px,1.7vw,26px);letter-spacing:.04em;color:var(--ink);opacity:.92;
+    margin-bottom:1.4vh;text-shadow:0 2px 14px rgba(0,0,0,.45);max-width:80vw}
+  #workshop:empty{display:none}
   #title{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(26px,4.2vw,64px);line-height:1.1;
     text-shadow:0 2px 24px rgba(0,0,0,.35)}
   #time{font-weight:300;font-size:clamp(84px,17vw,260px);line-height:1;letter-spacing:-.02em;
@@ -81,6 +84,7 @@
     border-radius:18px;box-shadow:0 18px 50px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.18)}
   body.corner .content{padding:15% 6% 26%}
   body.corner .eyebrow{font-size:clamp(9px,.75vw,12px);margin-bottom:2%}
+  body.corner #workshop{font-size:clamp(9px,.8vw,13px);margin-bottom:1%;opacity:.85}
   body.corner #title{font-size:clamp(14px,1.35vw,22px)}
   body.corner #time{font-size:clamp(40px,5.6vw,92px);margin:2% 0 0}
   body.corner #time.done{font-size:clamp(26px,3vw,48px)}
@@ -133,6 +137,7 @@
   <div class="bg" id="bgB"></div>
   <div class="shade"></div>
   <div class="content">
+    <div id="workshop"></div>
     <div class="eyebrow" id="eyebrow">Break</div>
     <h1 id="title">Time to recharge</h1>
     <div id="time">10:00</div>
@@ -169,6 +174,7 @@
   <div class="panel">
     <h2 id="setTitle">Break timer settings</h2>
     <div class="sub">Changes save in this browser.</div>
+    <div class="row"><label for="sWorkshop">Workshop name</label><input type="text" id="sWorkshop" placeholder="e.g. Leading Through Change"></div>
     <div class="row"><label for="sTitle">Heading</label><input type="text" id="sTitle"></div>
     <div class="row"><label for="sEyebrow">Label</label><input type="text" id="sEyebrow"></div>
     <div class="row"><label for="sDone">When time's up</label><input type="text" id="sDone"></div>
@@ -204,7 +210,7 @@
     </div>
     <div class="help">
       <b>Shortcuts:</b> Space start/pause · R reset · + / − change by a minute · 1–9 set minutes ×5 · L layout · F full screen · S settings · Q sayings on/off · H hide controls.<br>
-      <b>Links for Camo Web Layers</b> (when the page is hosted at its own address): add <code>?min=10</code> to start a 10-minute break as soon as the scene opens, <code>&amp;mode=corner</code> for the small overlay, <code>&amp;clean=1</code> to hide the buttons, <code>&amp;quotes=0</code> for the timer only.
+      <b>Links for Camo Web Layers</b> (when the page is hosted at its own address): add <code>?min=10</code> to start a 10-minute break as soon as the scene opens, <code>&amp;mode=corner</code> for the small overlay, <code>&amp;clean=1</code> to hide the buttons, <code>&amp;quotes=0</code> for the timer only, <code>&amp;workshop=Leading%20Through%20Change</code> to show the workshop name.
     </div>
   </div>
 </div>
@@ -266,7 +272,7 @@ Listen to understand, not just to reply.
 Breathe. Stretch. Come back with one new question.`;
 
 const DEFAULTS = {
-  title:"Time to recharge", eyebrow:"Break", done:"Welcome back",
+  workshop:"", title:"Time to recharge", eyebrow:"Break", done:"Welcome back",
   brand:"<b>Tom Smyth</b> &nbsp;·&nbsp; Transformational Change",
   site:"www.tom-smyth.com",
   zones:"Dublin = Europe/Dublin\nNew York = America/New_York\nSingapore = Asia/Singapore",
@@ -283,6 +289,7 @@ let params; try{ params = new URLSearchParams(location.search); }catch(e){ param
 const urlMin = parseFloat(params.get("min"));
 if(params.get("mode")==="corner"||params.get("mode")==="full") S.mode = params.get("mode");
 if(params.get("title")) S.title = params.get("title");
+if(params.has("workshop")) S.workshop = params.get("workshop");
 if(params.get("quotes")==="0") S.quotes=false;
 if(params.get("quotes")==="1") S.quotes=true;
 if(params.get("clean")==="1") document.body.classList.add("clean");
@@ -416,7 +423,7 @@ function chime(){
 
 /* ---------- layout & text ---------- */
 function applyText(){
-  $("title").textContent=S.title; $("eyebrow").textContent=S.eyebrow; $("brand").innerHTML=S.brand;
+  $("workshop").textContent=S.workshop||""; $("title").textContent=S.title; $("eyebrow").textContent=S.eyebrow; $("brand").innerHTML=S.brand;
   $("site").textContent=S.site||""; $("csite").textContent=S.site||"";
   document.querySelectorAll(".logoImg").forEach(i=>i.src=LOGO);
   document.body.classList.toggle("corner", S.mode==="corner");
@@ -431,7 +438,7 @@ function fullscreen(){ try{ document.fullscreenElement? document.exitFullscreen(
 
 /* ---------- settings panel ---------- */
 function openSettings(){
-  $("sTitle").value=S.title; $("sEyebrow").value=S.eyebrow; $("sDone").value=S.done;
+  $("sWorkshop").value=S.workshop||""; $("sTitle").value=S.title; $("sEyebrow").value=S.eyebrow; $("sDone").value=S.done;
   $("sSite").value=S.site||"";
   $("sBrand").value=S.brand.replace(/<[^>]+>/g,"").replace(/&nbsp;/g," ");
   $("sSlide").value=String(S.slide); $("sBackAt").checked=S.backAt; $("sZones").value=S.zones||""; $("sChime").checked=S.chime; $("sQuotes").checked=S.quotes; $("sList").value=S.list;
@@ -441,7 +448,7 @@ function openSettings(){
 function closeSettings(){ $("settings").classList.remove("open"); setLock(true); }
 function escapeHtml(s){ return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 $("sSave").onclick=()=>{
-  S.title=$("sTitle").value||DEFAULTS.title; S.eyebrow=$("sEyebrow").value; S.done=$("sDone").value||DEFAULTS.done;
+  S.workshop=$("sWorkshop").value.trim(); S.title=$("sTitle").value||DEFAULTS.title; S.eyebrow=$("sEyebrow").value; S.done=$("sDone").value||DEFAULTS.done;
   if(unlocked){
     const b=$("sBrand").value.trim(); S.brand = b? escapeHtml(b).replace(/^([^·|]+)/,"<b>$1</b>") : "";
     S.site=$("sSite").value.trim();
@@ -451,7 +458,7 @@ $("sSave").onclick=()=>{
 };
 $("sUnlock").onclick=tryUnlock;
 $("sPw").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); tryUnlock(); } });
-$("sDefaults").onclick=()=>{ const keep={minutes:S.minutes,mode:S.mode, ...(unlocked?{}:{brand:S.brand,site:S.site})}; S={...DEFAULTS,...keep}; save(); openSettings(); applyText(); parseQuotes(); render(); };
+$("sDefaults").onclick=()=>{ const keep={minutes:S.minutes,mode:S.mode,workshop:S.workshop, ...(unlocked?{}:{brand:S.brand,site:S.site})}; S={...DEFAULTS,...keep}; save(); openSettings(); applyText(); parseQuotes(); render(); };
 $("settings").addEventListener("click",e=>{ if(e.target.id==="settings") closeSettings(); });
 
 /* ---------- wiring ---------- */

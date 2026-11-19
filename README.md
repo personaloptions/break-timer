@@ -11,6 +11,7 @@ A break-timer overlay for virtual workshops, made for Camo Studio Web Layers.
 | 10-minute break, starts as soon as the scene opens, no buttons | `?min=10&clean=1` |
 | 15-minute break as a small corner overlay | `?min=15&mode=corner&clean=1` |
 | Timer only, no sayings | `?min=10&quotes=0&clean=1` |
+| Show the workshop name | `?min=10&clean=1&workshop=Leading%20Through%20Change` |
 
 Keyboard shortcuts (in a browser window): Space start/pause · R reset · + / − a minute · Q sayings on/off · L layout · F full screen · S settings.
 
